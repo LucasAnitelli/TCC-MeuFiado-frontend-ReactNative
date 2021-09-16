@@ -29,4 +29,10 @@ export interface ResponseArrayDTO {
 export interface StorageDTO {
     nameEstablishment: string;
     email: string;
+    avatar: string;
+}
+
+export interface ResponsePhotoDTO {
+    avatar: string;
+    id: string;
 }

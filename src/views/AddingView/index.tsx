@@ -38,7 +38,6 @@ const AddingView: React.FC = () => {
         product: product,
       };
       const response = await addDebtorController(bodyData);
-      console.log('response', response);
       if (response.Success) {
         ToastAndroid.show('Adicionado com sucesso!!', ToastAndroid.SHORT);
         setLoading(false);

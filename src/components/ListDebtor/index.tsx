@@ -27,7 +27,6 @@ const ListDebtor: React.FC<ListProps> = (props) => {
       const now = Date.now();
       const DOUBLE_PRESS_DELAY = 300;
       if (lastTap && now - lastTap < DOUBLE_PRESS_DELAY) {
-        console.log('to aqui dentro')
         editClick();
       } else {
         lastTap = now;

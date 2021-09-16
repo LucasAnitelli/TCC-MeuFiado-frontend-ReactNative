@@ -4,6 +4,19 @@ import { createUserDTO, loginUserDTO } from "dto/login";
 
 export const baseUrl = 'http://192.168.0.106:3333/';
 
+export const headerFormData = async (method?: string, data: FormData) => {
+  const storagToken = await AsyncStorage.getItem('@MeuFiado:token');
+  return {
+    method: `${method}`,
+    headers: {
+      'Accept': 'application/json',
+      'Authorization': 'Bearer ' + storagToken,
+      'Content-Type': 'multipart/form-data',
+    },
+    body: JSON.stringify(data),
+  }
+}
+
 export const header = async (method?: string) => {
   const storagToken = await AsyncStorage.getItem('@MeuFiado:token');
   return {
@@ -109,3 +122,15 @@ export const getSearchDebtor = async (name: string) => {
     return null;
   }
 }
+
+export const patchSavePhoto = async (data: FormData) => {
+  try {
+    const result = await fetch(`${baseUrl}sessions/avatar`, await headerFormData('PATCH', data));
+    if (result)
+      return await result.json();
+  } catch (error) {
+    console.log('error', error);
+    return null;
+  }
+}
+

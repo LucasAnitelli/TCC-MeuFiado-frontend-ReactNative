@@ -2,6 +2,7 @@ import { createDrawerNavigator, DrawerContentComponentProps, DrawerContentOption
 import DrawerContent from '../components/Drawer/Content';
 import React from 'react';
 import ContentFlowView from './content.flow';
+import CameraView from '../views/CameraView';
 
 const AppDrawer = createDrawerNavigator();
 
@@ -13,6 +14,7 @@ const AppRoutes: React.FC = () => (
       <DrawerContent {...props} />
     )}>
     <AppDrawer.Screen name="ContentFlowView" component={ContentFlowView} />
+    <AppDrawer.Screen name="CameraView" component={CameraView} />
   </AppDrawer.Navigator>
 );
 

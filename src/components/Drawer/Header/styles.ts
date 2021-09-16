@@ -29,8 +29,8 @@ export const Photo = styled.Image`
 
 export const ContainerIcon = styled(Pressable).attrs({
   android_ripple: {
-    color: darken(0.1, palette.white),
-    borderless: false,
+    color: darken(0.2, palette.primary),
+    borderless: true,
     radius: 20,
   },
 })`

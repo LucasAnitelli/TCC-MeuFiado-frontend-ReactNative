@@ -24,7 +24,11 @@ export const AuthProvider: React.FC = ({ children }) => {
       const storageUser = JSON.parse(storag) as StorageDTO;
       setLoading(!!storageUser);
       if (storageUser && storagToken) {
-        setUser({ email: storageUser.email, nameEstablishment: storageUser.nameEstablishment });
+        setUser({
+          email: storageUser.email,
+          nameEstablishment: storageUser.nameEstablishment,
+          avatar: storageUser.avatar,
+        });
         setLoading(false);
       }
     } catch {
@@ -41,8 +45,16 @@ export const AuthProvider: React.FC = ({ children }) => {
 
     if (response.Success) {
       setLoading(false);
-      setUser({ email: username, nameEstablishment: response.Data.nameEstablishment });
-      const user = { email: username, nameEstablishment: response.Data.nameEstablishment }
+      setUser({
+        email: username,
+        nameEstablishment: response.Data.nameEstablishment,
+        avatar: response.Data.avatar,
+      });
+      const user = {
+        email: username,
+        nameEstablishment: response.Data.nameEstablishment,
+        avatar: response.Data.avatar
+      }
       AsyncStorage.setItem('@MeuFiado:token', response.Data.token);
       AsyncStorage.setItem('@MeuFiado:user', JSON.stringify({ ...user }));
     } else {
@@ -60,6 +72,7 @@ export const AuthProvider: React.FC = ({ children }) => {
     setUser(null);
     AsyncStorage.removeItem('@MeuFiado:user');
     AsyncStorage.removeItem('@MeuFiado:token');
+    AsyncStorage.removeItem('@MeuFiado:photo');
     return;
   };
 

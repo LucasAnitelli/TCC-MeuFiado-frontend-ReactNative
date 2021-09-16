@@ -2,6 +2,7 @@
 export interface User {
     email: string;
     nameEstablishment?: string;
+    avatar: string;
 }
 
 export interface AuthContextData {

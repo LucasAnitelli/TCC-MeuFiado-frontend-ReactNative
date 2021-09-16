@@ -5,17 +5,16 @@ import ListDebtor from '../../components/ListDebtor';
 import { debtorsDTO } from '../../dto/debtorsDTO';
 import { useNavigation } from '@react-navigation/native';
 import { useEffect } from 'react';
-import { useAuth } from '../../contexts/auth';
 import Header from '../../components/Header';
 import { deleteDebtorController, getPaginationDebtorsController } from '../../controller/debtorsController';
 import { ContainerAlert, TextAlert } from './styles';
 import palette from '../../theme/palette';
+import ButtonFloating from '../../components/ButtonFloating';
 
 const MainView: React.FC = () => {
   StatusBarD('light');
 
   const navigation = useNavigation();
-  const { signOut } = useAuth();
   const [page, setPage] = useState(1);
   const [pageScroll, setPageScroll] = useState(1);
   const [loadingPage, setLoadingPage] = useState(false);
@@ -34,7 +33,6 @@ const MainView: React.FC = () => {
     setLoading(true);
     try {
       const response = await getPaginationDebtorsController(page, 10);
-      console.log('response', response)
       setPageScroll(1);
       if (response.Success) {
         if (!!response.TotalPages) {
@@ -64,13 +62,10 @@ const MainView: React.FC = () => {
       return;
     }
     setLoadingPage(true);
-    console.log('pageScrol', pageScroll)
     if (pageScroll < totalPages) {
       setPageScroll(pageScroll + 1);
       try {
-        console.log('enviando', pageScroll + 1)
         const response = await getPaginationDebtorsController(pageScroll + 1, 10);
-        console.log('response', response)
         if (response.Success) {
           const list = response.Data;
           setDebtorList([...debtorList, ...list]);
@@ -90,7 +85,6 @@ const MainView: React.FC = () => {
   };
 
   const editInfo = (data: debtorsDTO) => {
-    console.log('ENVIANDO', { data });
     navigation.navigate('ChangeView', { data });
   };
 
@@ -113,7 +107,6 @@ const MainView: React.FC = () => {
         onPress: async () => {
           try {
             const response = await deleteDebtorController(item.id);
-            console.log('responseDelete', response)
             if (response.Success) {
               loadDebtors();
               ToastAndroid.show('Excluido com sucesso!!', ToastAndroid.LONG);
@@ -144,47 +137,59 @@ const MainView: React.FC = () => {
 
   const renderFlatList = () => {
     return (
-      <FlatList
-        style={{ marginTop: 8 }}
-        data={debtorList}
-        keyExtractor={(item) => String(item.id)}
-        renderItem={({ item }) => (
-          <ListDebtor
-            data={item}
-            handleRemove={() => {
-              handleRemove(item);
-            }}
-            editClick={() => {
-              editInfo(item);
-            }}
-          />
-        )}
-        showsVerticalScrollIndicator={false}
-        onEndReached={paginationScroll}
-        onEndReachedThreshold={0.4}
-        refreshing={false}
-        onRefresh={() => {
-          loadDebtors();
-        }
-        }
-        ListFooterComponent={renderFooter}
-      />
+      <>
+        <FlatList
+          style={{ marginTop: 8 }}
+          data={debtorList}
+          keyExtractor={(item) => String(item.id)}
+          renderItem={({ item }) => (
+            <ListDebtor
+              data={item}
+              handleRemove={() => {
+                handleRemove(item);
+              }}
+              editClick={() => {
+                editInfo(item);
+              }} />
+          )}
+          showsVerticalScrollIndicator={false}
+          onEndReached={paginationScroll}
+          onEndReachedThreshold={0.4}
+          refreshing={false}
+          onRefresh={() => {
+            loadDebtors();
+          }}
+          ListFooterComponent={renderFooter} />
+        <ButtonFloating
+          handleClick={addInfo}
+          icon="plus"
+          backgroundColor={palette.primary}
+          color={palette.white}
+        />
+      </>
     );
   };
 
   const renderNotDebtors = () => {
     return (
-      <ContainerAlert>
-        <TextAlert>
-          Você não tem nenhum devedor, por favor adicionar!!
-        </TextAlert>
-      </ContainerAlert>
+      <>
+        <ContainerAlert>
+          <TextAlert>
+            Você não tem nenhum devedor, por favor adicionar!!
+          </TextAlert>
+        </ContainerAlert>
+        <ButtonFloating
+          handleClick={addInfo}
+          icon="plus"
+          backgroundColor={palette.primary}
+          color={palette.white} />
+      </>
     );
   };
 
   return (
     <>
-      <Header title="Meu Fiado" rightClick={Search} addClick={addInfo} />
+      <Header title="Meu Fiado" rightClick={Search} />
       {
         loading ?
           <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>

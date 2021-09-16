@@ -1,16 +1,31 @@
-import AsyncStorage from '@react-native-community/async-storage';
-import { useNavigation } from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, BackHandler, Dimensions, PermissionsAndroid, ToastAndroid, TouchableOpacity, View } from 'react-native';
+import {
+  ActivityIndicator,
+  BackHandler,
+  PermissionsAndroid,
+  ToastAndroid,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { RNCamera } from 'react-native-camera';
-import palette from '../../theme/palette';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import { launchImageLibrary } from 'react-native-image-picker/src';
+import { CONST } from '~/assets/Constants';
+import Icon from '~/assets/icons';
+import { STR } from '~/assets/Strings';
+import KeyValuePairController from '~/controllers/KeyValuePairController';
+import palette from '~/theme/palette';
+import Logger from '~/utils/Logger';
 
 const CameraView: React.FC = () => {
   const navigation = useNavigation();
   const [type, setType] = useState(RNCamera.Constants.Type.back);
   const [loading, setLoading] = useState(false);
+
+  /**
+   * controllers
+   */
+  const kvpCtr = new KeyValuePairController();
 
   useEffect(() => {
     BackHandler.addEventListener('hardwareBackPress', () => { return goBack() });
@@ -22,7 +37,7 @@ const CameraView: React.FC = () => {
     return true;
   }
 
-  const hasAndroidPermission = async () => {
+  async function hasAndroidPermission() {
     const permission = PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE;
     const hasPermission = await PermissionsAndroid.check(permission);
     if (hasPermission) {
@@ -32,21 +47,21 @@ const CameraView: React.FC = () => {
     return status === 'granted';
   }
 
-
   const takePicture = async (camera: RNCamera) => {
     if (hasAndroidPermission) {
       setLoading(true);
       try {
-        const option = { quality: 0.1, base64: true, fixOrientation: true, skipProcessing: true };
-        const data = await camera.takePictureAsync(option);
+        const options = { quality: 0.1, base64: true, fixOrientation: true, skipProcessing: true };
+        const data = await camera.takePictureAsync(options);
 
         ToastAndroid.show('Foto capturada com sucesso!', ToastAndroid.SHORT);
 
-        const json = await AsyncStorage.getItem('@MeuFiado:photo');
+        const json = await kvpCtr.get(CONST.SELECTED_PHOTO);
         const photo = JSON.parse(json);
-        await AsyncStorage.removeItem('@MeuFiado:photo');
-        await AsyncStorage.setItem(
-          "@MeuFiado:photo",
+
+        await kvpCtr.delete(CONST.SELECTED_PHOTO);
+        await kvpCtr.set(
+          CONST.SELECTED_PHOTO,
           JSON.stringify({
             ...photo,
             uri: data.uri,
@@ -55,29 +70,40 @@ const CameraView: React.FC = () => {
 
         navigation.goBack();
       } catch (error) {
-        ToastAndroid.show('Não foi possível tirar foto', ToastAndroid.LONG);
+        Logger('Erro>', error);
+        ToastAndroid.show(STR.CAMERA.TAKE_PICTURE_ERROR, ToastAndroid.LONG);
+      } finally {
+        setLoading(false);
       }
     }
-    setLoading(false);
+  };
+
+  function flipCamera() {
+    if (type === RNCamera.Constants.Type.back) {
+      setType(RNCamera.Constants.Type.front);
+    } else {
+      setType(RNCamera.Constants.Type.back);
+    }
   }
 
-  const accessGallery = async () => {
+  async function accessGallery() {
     launchImageLibrary(
       {
         mediaType: 'photo',
         quality: 0.1,
       },
       async (response) => {
-        if (!!response.assets[0].uri) {
+        if (!!response.uri) {
           try {
-            const json = await AsyncStorage.getItem('@MeuFiado:photo');
+            const json = await kvpCtr.get(CONST.SELECTED_PHOTO);
             const photo = JSON.parse(json);
-            await AsyncStorage.removeItem('@MeuFiado:photo');
-            await AsyncStorage.setItem(
-              "@MeuFiado:photo",
+
+            await kvpCtr.delete(CONST.SELECTED_PHOTO);
+            await kvpCtr.set(
+              CONST.SELECTED_PHOTO,
               JSON.stringify({
                 ...photo,
-                uri: response.assets[0].uri,
+                uri: response.uri,
               })
             );
             navigation.goBack();
@@ -93,8 +119,8 @@ const CameraView: React.FC = () => {
     <RNCamera
       style={{ flex: 1, paddingBottom: 24, justifyContent: 'flex-end', alignItems: 'center' }}
       androidCameraPermissionOptions={{
-        title: 'Permissão para usar camera',
-        message: 'Precisamos de sua permissão para usar sua câmera',
+        title: STR.CAMERA.PERMISSION_DIALOG_TITLE,
+        message: STR.CAMERA.PERMISSION_DIALOG_MESSAGE,
         buttonPositive: 'Ok',
       }}
       type={type}
@@ -106,7 +132,7 @@ const CameraView: React.FC = () => {
             style={{
               flex: 0,
               flexDirection: 'row',
-              justifyContent: 'flex-start',
+              justifyContent: 'space-between',
               width: '100%',
               paddingHorizontal: 24,
             }}>
@@ -121,29 +147,45 @@ const CameraView: React.FC = () => {
                 height: 40,
               }}
               onPress={accessGallery}>
-              <Icon name="image" size={20} color={palette.dark} />
+              <Icon name="IconGallery" size={24} fill={palette.dark} />
             </TouchableOpacity>
+            {
+              <TouchableOpacity
+                style={{
+                  flex: 0,
+                  backgroundColor: palette.white,
+                  padding: 20,
+                  alignSelf: 'center',
+                  borderRadius: 150,
+                }}
+                disabled={loading}
+                onPress={() => takePicture(camera)}>
+                {loading ? (
+                  <ActivityIndicator color={palette.primary} size={40} />
+                ) : (
+                  <Icon name="IconCameraPhoto" size={40} fill={palette.dark} />
+                )}
+              </TouchableOpacity>
+            }
+
             <TouchableOpacity
               style={{
                 flex: 0,
                 backgroundColor: palette.white,
-                padding: 20,
+                padding: 8,
                 alignSelf: 'center',
-                borderRadius: 150,
-                marginLeft: Dimensions.get('window').width * 0.22,
+                borderRadius: 20,
+                width: 40,
+                height: 40,
               }}
-              disabled={loading}
-              onPress={() => takePicture(camera)}>
-              {loading ?
-                <ActivityIndicator color={palette.primary} size={30} />
-                :
-                <Icon name="camera" size={30} color={palette.dark} />}
+              onPress={flipCamera}>
+              <Icon name="IconFlipCamera" size={24} fill={palette.dark} />
             </TouchableOpacity>
           </View>
         );
       }}
     </RNCamera>
   );
-}
+};
 
 export default CameraView;

@@ -46,7 +46,6 @@ const RegisterView: React.FC = () => {
         password: password
       };
       const response = await postCreateUserController(data);
-      console.log('response', response);
       if (response.Success) {
         ToastAndroid.show(
           'Usuário criado com sucesso',

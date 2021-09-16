@@ -7,6 +7,8 @@ import NoImg from "../../../assets/no-img.png";
 import { DrawerHeaderProps } from './types';
 import { DrawerActions } from '@react-navigation/native';
 import { View } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
+import { photoDTO } from '../../../dto/storage';
 
 const DrawerHeader: React.FC<DrawerHeaderProps> = (props: DrawerHeaderProps) => {
   const { handleChange, navigation } = props;
@@ -14,16 +16,22 @@ const DrawerHeader: React.FC<DrawerHeaderProps> = (props: DrawerHeaderProps) => 
   const [nameEstablishment, setNameEstablishment] = useState('');
   const [photo, setPhoto] = useState('');
 
-  useEffect(() => {
-    loadData();
-  }, [user])
+  useEffect(
+    React.useCallback(() => {
+      loadData();
+    }, [])
+  );
 
-  const loadData = () => {
-    setNameEstablishment(user.nameEstablishment);
-    setPhoto('https://fotos.vivadecora.com.br/decoracao-restaurante-entrada-principal-lucianoleitedesousa-207111-square_cover_xsmall.jpg');
+  const loadData = async () => {
+    const json = await AsyncStorage.getItem('@MeuFiado:photo');
+    const photo = JSON.parse(json) as photoDTO;
+    setPhoto(photo?.uri);
+    setNameEstablishment(user?.nameEstablishment);
   }
 
-
+  const accessCamera = () => {
+    navigation.navigate('CameraView');
+  }
 
   return (
     <ContainerHeader>
@@ -33,12 +41,12 @@ const DrawerHeader: React.FC<DrawerHeaderProps> = (props: DrawerHeaderProps) => 
         </ContainerIconBack>
       </View>
       <ContainerImg>
-        {photo?.length ?
+        {photo ?
           <Photo source={{ uri: photo }} />
           :
           <Photo source={NoImg} />
         }
-        <ContainerIcon onPress={() => { }}>
+        <ContainerIcon onPress={accessCamera}>
           <Icon name="camera" size={16} color={palette.white} />
         </ContainerIcon>
       </ContainerImg>

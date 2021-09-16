@@ -8,4 +8,5 @@ export interface debtorsDTO {
     email?: string;
     password?: string;
     token?: string;
+    avatar?: string;
 }

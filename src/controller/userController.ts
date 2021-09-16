@@ -1,5 +1,5 @@
-import { createUserDTO, loginUserDTO, ResponseDTO } from "dto/login";
-import { postCreateUser, postLoginAuth } from "../services/apiService";
+import { createUserDTO, loginUserDTO, ResponseDTO, ResponsePhotoDTO } from "dto/login";
+import { patchSavePhoto, postCreateUser, postLoginAuth } from "../services/apiService";
 
 
 export const postLoginAuthController = async (data: loginUserDTO) => {
@@ -20,6 +20,20 @@ export const postCreateUserController = async (data: createUserDTO) => {
         const response = await postCreateUser(data);
         if (response) {
             const result: ResponseDTO = response;
+            return result;
+        }
+    } catch (error) {
+        console.log('error', error);
+        return null;
+    }
+}
+
+
+export const patchSavePhotoController = async (data: FormData) => {
+    try {
+        const response = await patchSavePhoto(data);
+        if (response) {
+            const result: ResponsePhotoDTO = response;
             return result;
         }
     } catch (error) {

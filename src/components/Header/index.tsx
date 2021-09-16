@@ -4,7 +4,6 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import palette from '../../theme/palette';
 import {
   Container,
-  IconEditClick,
   IconLeftClick,
   IconRightClick,
   LeftBox,
@@ -15,7 +14,7 @@ import {
 import { HeaderProps } from './types';
 
 const Header: React.FC<HeaderProps> = (props) => {
-  const { title, leftClick, rightClick, addClick } = props;
+  const { title, leftClick, rightClick } = props;
 
   return (
     <Container>
@@ -31,13 +30,6 @@ const Header: React.FC<HeaderProps> = (props) => {
           <TitleHeader>{title}</TitleHeader>
         </TitleBox>
       </LeftBox>
-      <RightBox>
-        {addClick && (
-          <IconEditClick onPress={addClick} activeOpacity={0.5}>
-            <Icon name="plus" size={24} color={palette.white} />
-          </IconEditClick>
-        )}
-      </RightBox>
       <RightBox>
         {rightClick && (
           <IconRightClick onPress={rightClick}>

@@ -23,7 +23,6 @@ const SearchingView: React.FC = () => {
 
   useEffect(() => {
     if (!searchText) {
-      console.log('searchText', searchText)
       setShowFlatList(false);
       setList([]);
     }
@@ -41,7 +40,6 @@ const SearchingView: React.FC = () => {
     Keyboard.dismiss();
     try {
       const response = await getSearchDebtorController(name);
-      console.log('response', response);
       if (response.Success) {
         setList(response.Data);
         setLoading(false);
@@ -88,7 +86,6 @@ const SearchingView: React.FC = () => {
         onPress: async () => {
           try {
             const response = await deleteDebtorController(item.id);
-            console.log('responseDelete', response)
             if (response.Success) {
               newStateName();
               ToastAndroid.show('Excluido com sucesso!!', ToastAndroid.LONG);

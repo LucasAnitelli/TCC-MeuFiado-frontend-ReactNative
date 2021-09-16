@@ -19,7 +19,7 @@ export const Container = styled(Pressable).attrs((props: ButtonStyle) => ({
     borderless: false,
     radius: Dimensions.get("screen").width - 32,
   },
-}))<ButtonStyle>`
+})) <ButtonStyle>`
   height: 56px;
   padding: 0 16px;
   border-radius: 4px;
@@ -29,7 +29,7 @@ export const Container = styled(Pressable).attrs((props: ButtonStyle) => ({
   background-color: ${(props) => defineBackgroundColor(props)};
 `;
 
-export const Title = styled(Typography).attrs({ size: 16 })<ButtonStyle>`
+export const Title = styled(Typography).attrs({ size: 16 }) <ButtonStyle>`
   color: ${(props) => (!!props.textColor ? props.textColor : palette.white)};
   margin: 0 8px;
 `;
