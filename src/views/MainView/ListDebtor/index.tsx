@@ -1,10 +1,10 @@
 import React from 'react';
-import { Animated, View, ToastAndroid } from 'react-native';
+import { Animated, ToastAndroid } from 'react-native';
 import { Swipeable } from 'react-native-gesture-handler';
 import { ListProps } from './types';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import palette from '../../theme/palette';
-import { useMask } from '../../utils/Mask';
+import palette from '../../../theme/palette';
+import { useMask } from '../../../utils/Mask';
 import {
   ButtonRemove,
   Container,

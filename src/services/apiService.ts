@@ -2,9 +2,9 @@ import AsyncStorage from "@react-native-community/async-storage";
 import { debtorsDTO } from "dto/debtorsDTO";
 import { createUserDTO, loginUserDTO } from "dto/login";
 
-export const baseUrl = 'http://192.168.0.106:3333/';
+const baseUrl = process.env.BASE_URL;
 
-export const headerFormData = async (method?: string, data: FormData) => {
+export const headerFormData = async (method?: string, data?: FormData) => {
   const storagToken = await AsyncStorage.getItem('@MeuFiado:token');
   return {
     method: `${method}`,

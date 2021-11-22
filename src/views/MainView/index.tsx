@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FlatList, Alert, ToastAndroid, ActivityIndicator, View } from 'react-native';
 import StatusBarD from '../../utils/StatusBarD';
-import ListDebtor from '../../components/ListDebtor';
+import ListDebtor from './ListDebtor';
 import { debtorsDTO } from '../../dto/debtorsDTO';
 import { useNavigation } from '@react-navigation/native';
 import { useEffect } from 'react';
@@ -96,8 +96,8 @@ const MainView: React.FC = () => {
     navigation.navigate('SearchingView');
   };
 
-  const handleRemove = (item: debtorsDTO) => {
-    Alert.alert('Remover', `Deseja remover ${item.nameDebtor} ?`, [
+  const handleRemove = (itemRemove: debtorsDTO) => {
+    Alert.alert('Remover', `Deseja remover ${itemRemove.nameDebtor} ?`, [
       {
         text: 'Não',
         style: 'cancel',
@@ -106,9 +106,10 @@ const MainView: React.FC = () => {
         text: 'Sim',
         onPress: async () => {
           try {
-            const response = await deleteDebtorController(item.id);
+            const response = await deleteDebtorController(itemRemove.id);
             if (response.Success) {
-              loadDebtors();
+              const newDebtorList = debtorList.filter(item => item.id !== itemRemove.id)
+              setDebtorList(newDebtorList)
               ToastAndroid.show('Excluido com sucesso!!', ToastAndroid.LONG);
             } else {
               ToastAndroid.show(response.Message, ToastAndroid.LONG);

@@ -9,6 +9,7 @@ export const Email = styled(Typography).attrs({
   size: 16,
   color: palette.dark
 })` 
+  font-weight: bold;
   text-align: center;
 `;
 

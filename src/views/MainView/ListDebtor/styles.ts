@@ -1,7 +1,7 @@
-import Typography from '../../components/Typography';
+import Typography from '../../../components/Typography';
 import styled from 'styled-components/native';
-import palette from '../../theme/palette';
-import { Card } from '../../theme/card';
+import palette from '../../../theme/palette';
+import { Card } from '../../../theme/card';
 
 export const ButtonRemove = styled.TouchableOpacity`
   width: 70px;

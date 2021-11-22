@@ -42,8 +42,7 @@ export const AuthProvider: React.FC = ({ children }) => {
       password: password,
     }
     const response = await postLoginAuthController(bodyData);
-
-    if (response.Success) {
+    if (response?.Success) {
       setLoading(false);
       setUser({
         email: username,

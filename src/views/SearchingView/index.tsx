@@ -7,7 +7,7 @@ import { Container, IconClick, Title } from './styles';
 import palette from '../../theme/palette';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { debtorsDTO } from '../../dto/debtorsDTO';
-import ListDebtor from '../../components/ListDebtor';
+import ListDebtor from '../MainView/ListDebtor';
 import { useEffect } from 'react';
 import Input from '../../components/Form/Input';
 import { deleteDebtorController, getSearchDebtorController } from '../../controller/debtorsController';
