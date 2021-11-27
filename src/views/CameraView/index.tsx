@@ -1,16 +1,31 @@
 import AsyncStorage from '@react-native-community/async-storage';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, BackHandler, Dimensions, PermissionsAndroid, ToastAndroid, TouchableOpacity, View } from 'react-native';
+import {
+  ActivityIndicator,
+  BackHandler,
+  Dimensions,
+  PermissionsAndroid,
+  ToastAndroid,
+  TouchableOpacity,
+  View
+} from 'react-native';
 import { RNCamera } from 'react-native-camera';
 import palette from '../../theme/palette';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { launchImageLibrary } from 'react-native-image-picker/src';
+import { patchSavePhotoController } from '../../controller/userController';
+
+interface Params {
+  isDrawerHeader: boolean;
+}
 
 const CameraView: React.FC = () => {
   const navigation = useNavigation();
   const [type, setType] = useState(RNCamera.Constants.Type.back);
   const [loading, setLoading] = useState(false);
+  const route = useRoute();
+  const { isDrawerHeader } = route.params as Params
 
   useEffect(() => {
     BackHandler.addEventListener('hardwareBackPress', () => { return goBack() });
@@ -52,7 +67,17 @@ const CameraView: React.FC = () => {
             uri: data.uri,
           })
         );
-
+        if (isDrawerHeader) {
+          let data = new FormData()
+          if (photo) {
+            data.append('avatar', {
+              type: 'image/jpeg',
+              name: 'image.jpg',
+              uri: photo.uri,
+            })
+            await patchSavePhotoController(data)
+          }
+        }
         navigation.goBack();
       } catch (error) {
         ToastAndroid.show('Não foi possível tirar foto', ToastAndroid.LONG);
@@ -80,6 +105,17 @@ const CameraView: React.FC = () => {
                 uri: response.assets[0].uri,
               })
             );
+            if (isDrawerHeader) {
+              let data = new FormData()
+              if (photo) {
+                data.append('avatar', {
+                  type: 'image/jpeg',
+                  name: 'image.jpg',
+                  uri: photo.uri,
+                })
+                await patchSavePhotoController(data)
+              }
+            }
             navigation.goBack();
           } catch (error) {
             ToastAndroid.show('Algo de errado ocorreu', ToastAndroid.LONG);
@@ -91,7 +127,12 @@ const CameraView: React.FC = () => {
 
   return (
     <RNCamera
-      style={{ flex: 1, paddingBottom: 24, justifyContent: 'flex-end', alignItems: 'center' }}
+      style={{
+        flex: 1,
+        paddingBottom: 24,
+        justifyContent: 'flex-end',
+        alignItems: 'center'
+      }}
       androidCameraPermissionOptions={{
         title: 'Permissão para usar camera',
         message: 'Precisamos de sua permissão para usar sua câmera',

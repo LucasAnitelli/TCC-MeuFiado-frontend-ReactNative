@@ -70,7 +70,7 @@ const MainView: React.FC = () => {
           const list = response.Data;
           setDebtorList([...debtorList, ...list]);
         } else {
-          console.log('paginationScroll');
+          throw new Error('Erro ao carregar lista')
         }
       } catch (error) {
         ToastAndroid.show(

@@ -1,4 +1,17 @@
+import { MONTHS } from "../assets/Constants";
+
 const maskContainer = {
+  DateMaskSendBack: (dateValue: string | Date) => {
+    let date: Date = new Date(dateValue);
+    if (date instanceof Date && !isNaN((date as unknown) as number)) {
+      const ano = date.getFullYear();
+      const mes = `00${date.getMonth() + 1}`.slice(-2);
+      const dia = `00${date.getUTCDate()}`.slice(-2);
+
+      return `${ano}-${mes}-${dia}`;
+    } else return '';
+  },
+
   DateMask: (dateValue: string | Date) => {
     let date: Date = new Date(dateValue);
     if (date instanceof Date && !isNaN((date as unknown) as number)) {
@@ -10,27 +23,16 @@ const maskContainer = {
     } else return '';
   },
 
-  DateFor: (date: string) => {
+  formatDatePicker: (date: string) => {
     if (!date) return '';
-    let resultValue = '';
-    const dateValue = date.replace(/[\D]/g, '').substring(0, 8);
-    for (let i = 0; dateValue.length > i; i++) {
-      if (i === 2) {
-        resultValue += `/${dateValue[i]}`;
-      } else if (i === 4) {
-        resultValue += `/${dateValue[i]}`;
-      } else {
-        resultValue += dateValue[i];
-      }
-    }
-    return resultValue;
-  },
 
-  dateConvert: (date: string) => {
-    if (!date) return '';
-    const [dia, mes, ano] = date.split("/");
-    const resultValue = ano + '-' + ("0" + mes).slice(-2) + '-' + ("0" + dia).slice(-2);
-    return resultValue;
+    if (date.includes('/')) {
+      let dateSplit = date.split('/');
+      return dateSplit[1] + ' de ' + MONTHS[parseInt(dateSplit[0]) - 1] + ' de 20' + dateSplit[2];
+    } else {
+      let dateSplit = date.split('-');
+      return dateSplit[2] + ' de ' + MONTHS[parseInt(dateSplit[1]) - 1] + ' de ' + dateSplit[0];
+    }
   },
 
   MoneyMask: (input: string) => {
@@ -50,9 +52,9 @@ const maskContainer = {
 
 export type MaskType =
   | 'date'
-  | 'dateFor'
-  | 'dateConvert'
-  | 'moneymask';
+  | 'moneymask'
+  | 'formatDatePicker'
+  | 'DateMaskSendBack';
 
 export function useMask(type: MaskType, value: string) {
   switch (type) {
@@ -60,10 +62,10 @@ export function useMask(type: MaskType, value: string) {
       return maskContainer.DateMask(value);
     case 'moneymask':
       return maskContainer.MoneyMask(value);
-    case 'dateFor':
-      return maskContainer.DateFor(value);
-    case 'dateConvert':
-      return maskContainer.dateConvert(value);
+    case 'formatDatePicker':
+      return maskContainer.formatDatePicker(value);
+    case 'DateMaskSendBack':
+      return maskContainer.DateMaskSendBack(value);
   }
 }
 

@@ -13,7 +13,6 @@ export const getPaginationDebtorsController = async (page: number, perPage: numb
       return result;
     }
   } catch (error) {
-    console.log('error', error);
     return null;
   }
 }
@@ -26,7 +25,6 @@ export const deleteDebtorController = async (id: string) => {
       return result;
     }
   } catch (error) {
-    console.log('error', error);
     return null;
   }
 }
@@ -39,7 +37,6 @@ export const addDebtorController = async (data: debtorsDTO) => {
       return result;
     }
   } catch (error) {
-    console.log('error', error);
     return null;
   }
 }
@@ -50,7 +47,6 @@ export const editDebtorController = async (id: string, data: debtorsDTO) => {
     const result: ResponseDTO = response;
     return result;
   } catch (error) {
-    console.log('error', error);
     return null;
   }
 }
@@ -60,7 +56,6 @@ export const getSearchDebtorController = async (name: string) => {
     const result: ResponseArrayDTO = response;
     return result;
   } catch (error) {
-    console.log('error', error);
     return null;
   }
 }

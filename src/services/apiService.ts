@@ -2,9 +2,9 @@ import AsyncStorage from "@react-native-community/async-storage";
 import { debtorsDTO } from "dto/debtorsDTO";
 import { createUserDTO, loginUserDTO } from "dto/login";
 
-const baseUrl = process.env.BASE_URL;
+const baseUrl = process.env.BASE_URL_LOCAL;
 
-export const headerFormData = async (method?: string, data?: FormData) => {
+const headerFormData = async (method?: string, data?: FormData) => {
   const storagToken = await AsyncStorage.getItem('@MeuFiado:token');
   return {
     method: `${method}`,
@@ -13,11 +13,11 @@ export const headerFormData = async (method?: string, data?: FormData) => {
       'Authorization': 'Bearer ' + storagToken,
       'Content-Type': 'multipart/form-data',
     },
-    body: JSON.stringify(data),
+    body: data,
   }
 }
 
-export const header = async (method?: string) => {
+const header = async (method?: string) => {
   const storagToken = await AsyncStorage.getItem('@MeuFiado:token');
   return {
     method: `${method}`,
@@ -28,7 +28,7 @@ export const header = async (method?: string) => {
   };
 }
 
-export const headerBody = async (method: string, data: Partial<debtorsDTO>) => {
+const headerBody = async (method: string, data: Partial<debtorsDTO>) => {
   const storagToken = await AsyncStorage.getItem('@MeuFiado:token');
   return {
     method: `${method}`,
@@ -41,7 +41,7 @@ export const headerBody = async (method: string, data: Partial<debtorsDTO>) => {
   };
 }
 
-export const headerNoToken = async (method: string, data: Partial<debtorsDTO>) => {
+const headerNoToken = async (method: string, data: Partial<debtorsDTO>) => {
   return {
     method: `${method}`,
     headers: {
@@ -57,7 +57,6 @@ export const postLoginAuth = async (data: loginUserDTO) => {
     const result = await fetch(`${baseUrl}sessions/login`, await headerNoToken('POST', data));
     return await result.json();
   } catch (error) {
-    console.log('error', error);
     return null;
   }
 }
@@ -67,7 +66,6 @@ export const postCreateUser = async (data: createUserDTO) => {
     const result = await fetch(`${baseUrl}users/create`, await headerNoToken('POST', data));
     return await result.json();
   } catch (error) {
-    console.log('error', error);
     return null;
   }
 }
@@ -77,7 +75,6 @@ export const getPaginationDebtors = async (page: number, perPage: number) => {
     const result = await fetch(`${baseUrl}debtors/pagination?page=${page}&perPage=${perPage}`, await header('GET'));
     return await result.json();
   } catch (error) {
-    console.log('error', error);
     return null;
   }
 }
@@ -87,7 +84,6 @@ export const deleteDebtor = async (id: string) => {
     const result = await fetch(`${baseUrl}debtors/${id}`, await header('DELETE'));
     return await result.json();
   } catch (error) {
-    console.log('error', error);
     return null;
   }
 }
@@ -97,7 +93,6 @@ export const addDebtor = async (data: debtorsDTO) => {
     const result = await fetch(`${baseUrl}debtors/create`, await headerBody('POST', data));
     return await result.json();
   } catch (error) {
-    console.log('error', error);
     return null;
   }
 }
@@ -107,7 +102,6 @@ export const editDebtor = async (id: string, data: debtorsDTO) => {
     const result = await fetch(`${baseUrl}debtors/${id}`, await headerBody('PUT', data));
     return await result.json();
   } catch (error) {
-    console.log('error', error);
     return null;
   }
 }
@@ -118,7 +112,6 @@ export const getSearchDebtor = async (name: string) => {
     if (result)
       return await result.json();
   } catch (error) {
-    console.log('error', error);
     return null;
   }
 }
@@ -129,8 +122,7 @@ export const patchSavePhoto = async (data: FormData) => {
     if (result)
       return await result.json();
   } catch (error) {
-    console.log('error', error);
+    ;
     return null;
   }
 }
-

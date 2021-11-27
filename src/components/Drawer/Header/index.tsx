@@ -9,18 +9,19 @@ import { DrawerActions } from '@react-navigation/native';
 import { View } from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import { photoDTO } from '../../../dto/storage';
+import { useIsDrawerOpen } from '@react-navigation/drawer';
 
 const DrawerHeader: React.FC<DrawerHeaderProps> = (props: DrawerHeaderProps) => {
-  const { handleChange, navigation } = props;
+  const { navigation } = props;
   const { user } = useAuth();
   const [nameEstablishment, setNameEstablishment] = useState('');
   const [photo, setPhoto] = useState('');
 
-  useEffect(
-    React.useCallback(() => {
-      loadData();
-    }, [])
-  );
+  const isDrawerOpen = useIsDrawerOpen();
+
+  useEffect(() => {
+    loadData();
+  }, [user, isDrawerOpen]);
 
   const loadData = async () => {
     const json = await AsyncStorage.getItem('@MeuFiado:photo');
@@ -30,7 +31,7 @@ const DrawerHeader: React.FC<DrawerHeaderProps> = (props: DrawerHeaderProps) => 
   }
 
   const accessCamera = () => {
-    navigation.navigate('CameraView');
+    navigation.navigate('CameraView', { isDrawerHeader: true });
   }
 
   return (

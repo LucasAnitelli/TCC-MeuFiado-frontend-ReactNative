@@ -15,6 +15,7 @@ const AppRoutes: React.FC = () => (
     )}>
     <AppDrawer.Screen name="ContentFlowView" component={ContentFlowView} />
     <AppDrawer.Screen name="CameraView" component={CameraView} />
+    <AppDrawer.Screen name="DrawerContent" component={DrawerContent} />
   </AppDrawer.Navigator>
 );
 
